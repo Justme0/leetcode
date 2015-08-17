@@ -21,22 +21,21 @@ end
 # @param {Integer[]} nums
 # @return {Integer}
 def first_missing_positive(nums)
-	p nums
 	place(nums)
-	p nums
 	first_missing_positive_aux(nums)
 end
 
-def test(a, result)
-	fail unless first_missing_positive(a) == result
-	p "ok"
-end
+require "test/unit"
 
-test([2, 1], 3)
-test([-1, -1], 1)
-test([1, -1], 2)
-test([1, 1], 2)
-test([], 1)
-test([1, 2, 0], 3)
-test([3, 4, -1, 1], 2)
-test([-3, -2, -1, 0, 1, 2, 3], 4)
+class TestKitty < Test::Unit::TestCase
+	def test_kitty
+		assert_equal(3, first_missing_positive([2, 1]))
+		assert_equal(1, first_missing_positive([-1, -1]))
+		assert_equal(2, first_missing_positive([1, -1]))
+		assert_equal(2, first_missing_positive([1, 1]))
+		assert_equal(1, first_missing_positive([]))
+		assert_equal(3, first_missing_positive([1, 2, 0]))
+		assert_equal(2, first_missing_positive([3, 4, -1, 1]))
+		assert_equal(4, first_missing_positive([-3, -2, -1, 0, 1, 2, 3]))
+	end
+end
