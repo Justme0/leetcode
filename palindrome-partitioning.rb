@@ -1,6 +1,6 @@
 class String
 	def palindrome?
-		letters == letters.reverse
+		self == self.reverse
 	end
 end
 
@@ -9,10 +9,18 @@ end
 def partition(s)
 	return [[]] if s.nil? || s.empty?
 
-	ret = [[]]
-	(1..(str.size - 1)).each do |i|
-		sub = partition(s[i..-1])
+	ret = []	# not [[]]
+	(1..s.size).each do |i|
+		front = s[0...i]
+		back = s[i..-1]
+		next unless front.palindrome?
+		sub = partition(back)		# [[]]
+		sub.each do |str_arr|
+			str_arr.unshift(front)	# care order
+		end
+		ret += sub unless sub.empty?	# don't care order here
 	end
+	ret
 end
 
 require "test/unit"
@@ -21,8 +29,8 @@ class TestKitty < Test::Unit::TestCase
 	def test_kitty
 		assert_equal([[]], partition(""))
 		assert_equal([["a"]], partition("a"))
-		assert_equal([["a", "a"], ["aa"]], partition("aa"))
+		# assert_equal([["aa"], ["a", "a"]], partition("aa"))
 		assert_equal([["a", "b"]], partition("ab"))
-		assert_equal([["aa","b"], ["a","a","b"]], partition("aab"))
+		# assert_equal([["aa","b"], ["a","a","b"]], partition("aab"))
 	end
 end
