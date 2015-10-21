@@ -1,3 +1,5 @@
+require 'set'
+
 class String
 	def palindrome?
 		self == self.reverse
@@ -23,14 +25,22 @@ def partition(s)
 	ret
 end
 
-require "test/unit"
+require 'test/unit'
+
+module Test::Unit::Assertions
+	def assert_equal_unorder(exp, act, msg = nil)
+		# msg = message(msg) {}
+		assert_equal(exp.to_set, act.to_set, msg)
+	end
+end
 
 class TestKitty < Test::Unit::TestCase
 	def test_kitty
-		assert_equal([[]], partition(""))
-		assert_equal([["a"]], partition("a"))
-		# assert_equal([["aa"], ["a", "a"]], partition("aa"))
-		assert_equal([["a", "b"]], partition("ab"))
-		# assert_equal([["aa","b"], ["a","a","b"]], partition("aab"))
+		assert_equal_unorder([[]], partition(""))
+		assert_equal_unorder([["a"]], partition("a"))
+		assert_equal_unorder([["aa"], ["a", "a"]], partition("aa"))
+		assert_equal_unorder([["a", "a"], ["aa"]], partition("aa"))
+		assert_equal_unorder([["a", "b"]], partition("ab"))
+		assert_equal_unorder([["aa","b"], ["a","a","b"]], partition("aab"))
 	end
 end
