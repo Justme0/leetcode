@@ -53,22 +53,10 @@ public:
 			} else if (x > other.x) {
 				return false;
 			} else if (isLeft == other.isLeft) {
-				return false;
+				return false; // or return this < &other;
 			} else {
 				return isLeft;
 			}
 		}
-
-		// bool operator<(const Point &other) const {
-		// 	if (this->x < other.x) {
-		// 		return true;
-		// 	} else if (this->x > other.x) {
-		// 		return false;
-		// 	} else if (this->isLeft == other.isLeft) {
-		// 		return this < &other;
-		// 	} else {
-		// 		return this->isLeft;
-		// 	}
-		// }
 	};
 };
