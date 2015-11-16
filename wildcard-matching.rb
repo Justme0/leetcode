@@ -1,6 +1,6 @@
 $result = {} # cache
 
-def is_match_aux(s, p)
+def is_match_dfs(s, p)
 	result = $result[[s, p]]
 	return result if !result.nil?
 
@@ -13,12 +13,12 @@ def is_match_aux(s, p)
 
 	if p[0] == "*"
 		(0..s.size).each do |i|
-			return $result[[s, p]] = true if is_match_aux(s[i..-1], p[1..-1])
+			return $result[[s, p]] = true if is_match_dfs(s[i..-1], p[1..-1])
 		end
 		return $result[[s, p]] = false
 	else
 		if p[0] == "?" or s[0] == p[0]
-			return $result[[s, p]] = is_match_aux(s[1..-1], p[1..-1])
+			return $result[[s, p]] = is_match_dfs(s[1..-1], p[1..-1])
 		else
 			return $result[[s, p]] = false
 		end
@@ -29,9 +29,11 @@ end
 # @param {String} p
 # @return {Boolean}
 def is_match(s, p)
+	# some optimization
+	return false if p.delete("*").size > s.size
 	return false if p[-1] != "*" && p[-1] != "?" && p[-1] != s[-1]
 	p = p.split("").chunk{|str| str == "*"}.map{|is_star, arr| is_star ? "*" : arr}.join
-	is_match_aux(s, p)
+	is_match_dfs(s, p)
 end
 
 require "test/unit"
@@ -50,12 +52,8 @@ class TestShit < Test::Unit::TestCase
 		assert is_match("aa","aa")
 		assert !is_match("aaa","aa")
 		assert !is_match("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"\
-				 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"\
-				 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"\
 				 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
 				 "*aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"\
-				 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"\
-				 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"\
 				 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa*")
 		assert is_match("aa", "*")
 		assert is_match("aa", "a*")
