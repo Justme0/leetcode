@@ -1,4 +1,5 @@
 def is_match(s, p)
+	p.gsub!(/\*+/, '*') # OPTIMIZE: check in loop
 	i = 0
 	j = 0
 	star = -1
@@ -11,7 +12,8 @@ def is_match(s, p)
 			star = j
 			j += 1
 			mark = i
-			# 这一步是关键，匹配s中当前字符与p中‘＊’后面的字符，如果匹配，则在第一个if中处理，如果不匹配，则继续比较s中的下一个字符。
+			# 这一步是关键，匹配s中当前字符与p中'*'后面的字符
+			# 如果匹配，则在第一个if中处理，如果不匹配，则继续比较s中的下一个字符。
 		elsif star != -1
 			j = star + 1
 			mark += 1
@@ -20,11 +22,14 @@ def is_match(s, p)
 			return false
 		end
 	end
-	# 最后在此处处理多余的‘＊’，因为多个‘＊’和一个‘＊’意义相同。
-	while j < p.length && p[j] == '*'
-		j += 1
-	end
-	j == p.length
+
+	# 最后在此处处理多余的'*'，因为多个'*'和一个'*'意义相同。
+	# while j < p.length && p[j] == '*'
+	# 	j += 1
+	# end
+	# j == p.length
+
+	j == p.length or (j == p.length - 1 and p[j] == "*")
 end
 
 require "test/unit"
@@ -80,6 +85,7 @@ class TestShit < Test::Unit::TestCase
 				 "babaaaaaababaababbbbabbbaab",
 				 "****aab**ba***bb***a*a*bab***b***ab*a*b*a***a"\
 				 "******a*bb**a"\
-				 "**bbaa*ba*abba*****b*aaba****a*b*****ba**abba")
+				 "**bbaa*ba*abba*******************************"\
+				 "**********b*aaba****a*b*****ba**abba")
 	end
 end

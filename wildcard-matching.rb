@@ -55,10 +55,10 @@ class TestShit < Test::Unit::TestCase
 		assert is_match("ab", "?*")
 		assert !is_match("aab", "c*a*b")
 		assert !is_match("bbaaaabaaaaabbabbabbabbababaabababaabbabaaabba"\
-				"ababababbabaa"\
-				"bbabbbbbbaaaaaabaabbbbbabbbbabbabababaaaaa",
-				"******aa*bbb*aa*a*bb*ab***bbba*a*babaab*b*aa*a"\
-				"****")
+				 "ababababbabaa"\
+				 "bbabbbbbbaaaaaabaabbbbbabbbbabbabababaaaaa",
+				 "******aa*bbb*aa*a*bb*ab***bbba*a*babaab*b*aa*a"\
+				 "****")
 		assert is_match("abbaaaabbbbbababbbbbbbbaaabaabbabaabbaaabbbbab"\
 				"bbbab",
 				"a*aaba***b**a*a********b")
@@ -89,6 +89,7 @@ class TestShit < Test::Unit::TestCase
 				 "babaaaaaababaababbbbabbbaab",
 				 "****aab**ba***bb***a*a*bab***b***ab*a*b*a***a"\
 				 "******a*bb**a"\
-				 "**bbaa*ba*abba*****b*aaba****a*b*****ba**abba")
+				 "**bbaa*ba*abba*******************************"\
+				 "**********b*aaba****a*b*****ba**abba")
 	end
 end
