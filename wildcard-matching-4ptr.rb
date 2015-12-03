@@ -1,5 +1,6 @@
+# TODO: review
+
 def is_match(s, p)
-	p.gsub!(/\*+/, '*') # OPTIMIZE: check in loop
 	i = 0
 	j = 0
 	star = -1
@@ -24,12 +25,10 @@ def is_match(s, p)
 	end
 
 	# 最后在此处处理多余的'*'，因为多个'*'和一个'*'意义相同。
-	# while j < p.length && p[j] == '*'
-	# 	j += 1
-	# end
-	# j == p.length
-
-	j == p.length or (j == p.length - 1 and p[j] == "*")
+	while j < p.length && p[j] == '*'
+		j += 1
+	end
+	j == p.length
 end
 
 require "test/unit"
