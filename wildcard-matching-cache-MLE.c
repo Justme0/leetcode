@@ -1,46 +1,52 @@
+// MLE
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
 #include <stdbool.h>
 
-bool **alloc(size_t row, size_t col) {
-  bool **m = (bool **)calloc(row, sizeof(bool *));
+int **alloc(size_t row, size_t col) {
+  int **m = (int **)malloc(row * sizeof(int *));
   if (m == NULL) {
     exit(1);
   }
   for (size_t i = 0; i < row; ++i) {
-    m[i] = (bool *)calloc(col, sizeof(bool));
+    m[i] = (int *)malloc(col * sizeof(int));
     if (NULL == m[i]) {
-      exit(1);
+      exit(1); // previous allocation may leak
     }
+    memset(m[i], 0xFF, col * sizeof(int)); // -1
   }
+
   return m;
 }
 
-void dealloc(bool **m, size_t row) {
+void dealloc(int **m, size_t row) {
   for (size_t i = 0; i < row; ++i) {
     free(m[i]);
   }
   free(m);
 }
 
-// bool isMatch(const char *s, const char *p) {
-//   size_t s_size = strlen(s);
-//   size_t p_size = strlen(p);
-//   bool **dp = alloc(1 + s_size, 1 + p_size);
-// }
+const char *g_s;
+const char *g_p;
 
-bool isMatch(const char* s, const char* p) {
+bool isMatch_dfs(const char *s, const char *p, int **m) {
+  int *pret = &m[s - g_s][p - g_p];
+  if (*pret != -1) {
+    assert(*pret == 0 || *pret == 1);
+    return *pret;
+  }
+
   if (*p == '\0') {
-    return *s == '\0';
+    return (*pret = (*s == '\0'));
   }
   if (*s == '\0') {
     if (strcmp(p, "*") == 0) {
-      return true;
+      return (*pret = true);
     }
     if (*p != '*') {
-      return false;
+      return (*pret = false);
     }
   }
 
@@ -51,18 +57,32 @@ bool isMatch(const char* s, const char* p) {
 
     int s_len = strlen(s);
     for (int i = 0; i <= s_len; ++i) {
-      if (isMatch(s + i, p + 1)) {
-        return true;
+      if (isMatch_dfs(s + i, p + 1, m)) {
+        return (*pret = true);
       }
     }
-    return false;
+    return (*pret = false);
   } else {
     if (*p == '?' || *s == *p) {
-      return isMatch(s + 1, p + 1);
+      return (*pret = isMatch_dfs(s + 1, p + 1, m));
     } else {
-      return false;
+      return (*pret = false);
     }
   }
+}
+
+bool isMatch(const char *s, const char *p) {
+  g_s = s;
+  g_p = p;
+
+  size_t s_size = strlen(s);
+  size_t p_size = strlen(p);
+  int **dp = alloc(1 + s_size, 1 + p_size);
+
+  bool ret = isMatch_dfs(s, p, dp);
+  dealloc(dp, 1 + s_size);
+
+  return ret;
 }
 
 int main() {
@@ -84,13 +104,12 @@ int main() {
   assert(!isMatch("aab", "c*a*b"));
   assert(isMatch("ab", "?*"));
   assert(!isMatch("aaabbbaabaabaaabbabbbbbbbbaabababbabbbaaaaba", "a*******b"));
-  //assert(!isMatch("aaabbbbaaaabbabbbbaabbabaaababaababaaaaaaabaaababbaababbaa"\
-                  "babbbaaaaabaabbabbaabaababbaabababbbbbbbbabbaabbaaabaababa"\
-                  "abaababababababbbbbbabbabbaabbaabaaaaaababaabbbaaabaaabbbb"\
+  assert(!isMatch("aaabbbbaaaabbabbbbaabbabaaababaababaaaaaaabaaababbaababbaa"
+                  "babbbaaaaabaabbabbaabaababbaabababbbbbbbbabbaabbaaabaababa"
+                  "abaababababababbbbbbabbabbaabbaabaaaaaababaabbbaaabaaabbbb"
                   "bbbbbaabaabaaabaaabbabbabb",
-                  "****a*b*b**b*bbb*b**bba***b**b*b*b**ba***b*b*a*b*b*****a**"\
+                  "****a*b*b**b*bbb*b**bba***b**b*b*b**ba***b*b*a*b*b*****a**"
                   "aaa*baaa*ba*****a****ba*a****a**b*******a*a"));
-
   puts("finished");
 
   return 0;
