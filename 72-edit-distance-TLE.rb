@@ -15,9 +15,23 @@ c) Replace a character
 
 def min_distance(word1, word2)
   fail if word1.nil? or word2.nil?
+  dp = Array.new(1005) { Array.new(1005) }
+  len1 = word1.size
+  len2 = word2.size
 
-  return word2.size if word1 == ""
-  return word1.size if word2 == ""
+  (0..[len1, len2].max).each do |i|
+    dp[0][i] = i
+    dp[i][0] = i
+  end
+
+  (1..len1).each do |i|
+    (1..len2).each do |j|
+      dp[i][j] = [dp[i-1][j] + 1, dp[i][j-1] + 1,
+                  dp[i-1][j-1] + (word1[i-1] == word2[j-1] ? 0 : 1)].min
+    end
+  end
+
+  dp[len1][len2]
 end
 
 require 'test/unit'
@@ -25,14 +39,18 @@ require 'test/unit'
 class TestShit < Test::Unit::TestCase
   def test_shit
     assert_equal(0, min_distance("", ""))
+    assert_equal(1, min_distance("a", "ac"))
     assert_equal(0, min_distance("a", "a"))
     assert_equal(1, min_distance("", "a"))
+    assert_equal(1, min_distance("a", ""))
     assert_equal(1, min_distance("c", ""))
     assert_equal(1, min_distance("a", "b"))
     assert_equal(1, min_distance("aa", "a"))
-    assert_equal(1, min_distance("a", "aa"))
-    assert_equal(1, min_distance("a", "ba"))
+    assert_equal(1, min_distance("aba", "aaa"))
+    assert_equal(1, min_distance("aba", "acba"))
+    assert_equal(2, min_distance("abbba", "acba"))
     assert_equal(2, min_distance("", "ac"))
     assert_equal(2, min_distance("ac", ""))
+    assert_equal(3, min_distance("teacher", "poached"))
   end
 end
