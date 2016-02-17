@@ -115,8 +115,8 @@ void print(struct ListNode *lst) {
 }
 
 int main() {
-  int arr[] = {1, 2, 3};
-  int k = 1;
+  int arr[] = {1, 2, 3, 4};
+  int k = 3;
   int size = sizeof arr / sizeof *arr;
   struct ListNode *lst = create_list(arr, size);
   print(lst);
