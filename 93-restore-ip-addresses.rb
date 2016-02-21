@@ -19,44 +19,39 @@ end
 # split s to get n valid IP fields
 # return nil if failed
 # @param {String} s, {Integer} n
-# @return {Integer[]}
+# @return {Integer[][]}
 def restore(s, n)
   fail if s.nil?
-  return nil if !s.empty? and n == 0
-  return nil if s.empty? and n != 0 # e.g. "", 1
-  return [[s.to_i]] if s.valid? and n == 1
+  return [] if !s.empty? and n == 0
+  return [] if s.empty? and n != 0 # e.g. "", 1
+  return [[s.to_i]] if s.valid? and n == 1 # obscure if check s.empty? and n == 0
 
   ret = [] # element is Integer[]
-  i = 0
-  while i < s.size and (prefix = s[0..i]; prefix.valid?)
-    other = restore(s[i+1 .. -1], n - 1)
-    # e.g. "34", 2, i is 1
-    if !other.nil?
-      other.each do |arr|
-        ret << ([prefix.to_i] + arr)
-      end
-    end
-    i += 1
-  end
+  s.size.times do |i|
+    prefix = s[0..i]
+    break unless prefix.valid?
 
+    restore(s[i+1 .. -1], n - 1).each do |arr|
+      fail if arr.empty?
+      ret << ([prefix.to_i] + arr)
+    end
+  end
   ret
 end
 
 # @param {String} s
 # @return {String[]}
 def restore_ip_addresses(s)
-  result = restore(s, 4)
-  return [] if result.nil?
-  result.map { |x| x.join(".") }
+  restore(s, 4).map { |x| x.join(".") }
 end
 
 require "test/unit"
 
 class TestKitty < Test::Unit::TestCase
   def test_kitty
-    assert_equal(nil, restore("", 1))
+    assert_equal([], restore("", 1))
     assert_equal([], restore("1", 2))
-    assert_equal(nil, restore("12", 0))
+    assert_equal([], restore("12", 0))
     assert_equal([], restore("", 0))
     assert_equal([[1]], restore("1", 1))
     assert_equal([[12]], restore("12", 1))
