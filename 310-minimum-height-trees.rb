@@ -92,9 +92,6 @@ def find_min_height_trees_trivial(n, edges)
   ret
 end
 
-# @param {Integer} n
-# @param {Integer[][]} edges
-# @return {Integer[]}
 def find_min_height_trees(n, edges)
   g = Array.new(n) { Set.new }
   # g = Hash.new { |hash, key| hash[key] = Set.new }
@@ -103,42 +100,42 @@ def find_min_height_trees(n, edges)
     g[arr[1]] << arr[0]
   end
 
-  tmp_leaves = (0...n).to_a
+  tmp_leaves = (0...n).to_set
   remained = (0...n).to_a
 
-  degree = Array.new(n)
-  n.times do |node|
-    degree[node] = g[node].size
-  end
-
-  until n <= 2
-    next_leaves = []
+  until remained.size <= 2
+    #pp g
+    next_leaves = Set.new
     leaves = []
 
-    tmp_leaves.each_index do |node|
-      if degree[node] == 1
+    # if graph is [[0, 1], [1, 2]], then
+    # leaves is [0, 2]
+    # next_leaves is [1]
+    tmp_leaves.each do |node|
+      if g[node].size == 1
         leaves << node
-        n -= 1
+        next_leaves << g[node].first
       end
-      next_leaves << g[node].first
     end
     tmp_leaves = next_leaves
 
     #puts "leaves is #{leaves}"
 
     leaves.each do |leaf|
-      #p leaf
       adj = g[leaf].first
+      #p "adj is #{adj}"
       g[adj].delete(leaf)
       g[leaf].clear
     end
+    #p "end"
+    remained -= leaves
   end
-  p "Current test ..."
-  remained - removed
+  remained
 end
 
 class TestKitty < Test::Unit::TestCase
   def test_kitty
+    assert_equal([3], find_min_height_trees(6, [[0,1],[0,2],[0,3],[3,4],[4,5]]))
     assert_equal([0, 1], find_min_height_trees(2, [[1, 0]]))
     assert_equal([1], find_min_height_trees(4, [[1, 0], [1, 2], [1, 3]]))
     assert_equal([3, 4], find_min_height_trees(6, [[0, 3], [1, 3], [2, 3], [4, 3], [5, 4]]))
