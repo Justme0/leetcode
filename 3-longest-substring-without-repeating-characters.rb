@@ -14,7 +14,7 @@ def length_of_longest_substring(s)
   last = 0
   max_len = 0
   sub = {} # char => index
-  s.split(//).each_with_index do |c, last|
+  s.chars.each_with_index do |c, last|
     if sub.include?(c)
       c_index = sub[c] # c is the repeated char
       (first..c_index).each do |i|
