@@ -24,27 +24,27 @@ class Solution {
   };
 
 public:
+  // BF(O(n^2)) is TLE
   int maxArea(std::vector<int>& height) {
     if (height.empty() || height.size() == 1) {
       return 0;
     }
 
     int max_area = 0;
-    for (std::vector<int>::size_type i = 0; i < height.size(); ++i) {
-      for (std::vector<int>::size_type j = i + 1; j < height.size(); ++j) {
-        int area = metric(Point(i, height[i]), Point(j, height[j]));
-        if (area > max_area) {
-          max_area = area;
-        }
-
-      }
+    int left = 0;
+    int right = height.size() - 1;
+    while (left < right) {
+      max_area = std::max(max_area,
+                          metric(Point(left, height[left]), Point(right, height[right])));
+      // OPTIMIZE: slide far more and reduce area computation
+      height[left] < height[right] ? ++left : --right;
     }
 
     return max_area;
   }
 
-  int metric(Point a, Point b) {
-    return std::abs(a.x - b.x) * std::min(a.y, b.y);
+  static int metric(const Point &left, const Point &right) {
+    return (right.x - left.x) * std::min(left.y, right.y);
   }
 };
 
