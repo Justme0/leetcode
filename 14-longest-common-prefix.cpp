@@ -11,7 +11,7 @@
 class Solution {
 public:
   //std::string longestCommonPrefix(std::vector<std::string> &strs) {
-  std::string longestCommonPrefix(std::vector<std::string> strs) {
+  std::string longestCommonPrefix(std::vector<std::string> strs) { // easy for test
     if (strs.empty()) {
       return "";
     }
