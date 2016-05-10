@@ -1,8 +1,11 @@
 =begin
-Given an array S of n integers, are there elements a, b, c, and d in S such that a + b + c + d = target? Find all unique quadruplets in the array which gives the sum of target.
+Given an array S of n integers, are there elements a, b, c, and d in S such that
+a + b + c + d = target? Find all unique quadruplets in the array which gives
+the sum of target.
 
 Note:
-Elements in a quadruplet (a,b,c,d) must be in non-descending order. (ie, a ≤ b ≤ c ≤ d)
+Elements in a quadruplet (a,b,c,d) must be in non-descending order. (ie, a ≤ b ≤
+c ≤ d)
 The solution set must not contain duplicate quadruplets.
     For example, given array S = {1 0 -1 0 -2 2}, and target = 0.
 
@@ -16,4 +19,14 @@ The solution set must not contain duplicate quadruplets.
 # @param {Integer} target
 # @return {Integer[][]}
 def four_sum(nums, target)
+  nums.sort!
+end
+
+require 'test/unit'
+
+class TestK < Test::Unit::TestCase
+  def test_k
+    assert_equal([[-1, 0, 0, 1], [-2, -1, 1, 2], [-2, 0, 0, 2]],
+                 four_sum([1, 0, -1, 0, -2, 2], 0))
+  end
 end
