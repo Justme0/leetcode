@@ -26,10 +26,10 @@ static void print(int *nums, size_t numsSize) {
   printf("\n");
 }
 
-int *advance(int *p, const int *last) {
+int *advance(int *p, const int *bound) {
   do {
     ++p;
-  } while (p < last && *(p - 1) == *p);
+  } while (p < bound && *(p - 1) == *p);
 
   return p;
 }
@@ -78,8 +78,8 @@ int** fourSum(int* nums, int numsSize, int target, int* preturnSize) {
   return ret;
 }
 
-void dealloc(int **m, int returnSize) {
-  for (int **pp = m; pp < m + returnSize; ++pp) {
+void dealloc(int **m, int size) {
+  for (int **pp = m; pp < m + size; ++pp) {
     free(*pp);
   }
   free(m);
