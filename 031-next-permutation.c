@@ -19,6 +19,23 @@ outputs are in the right-hand column.
 #include <assert.h>
 #include <stdio.h>
 
+// (first, last], descending order
+int *upper_bound(int *first, int *last, int val) {
+  int len = last - first;
+  while (len > 0) {
+    int half = len >> 1;
+    int *mid = last - half;
+    if (val < *mid) {
+      len = half;
+    } else {
+      last = mid - 1;
+      len -= half + 1;
+    }
+  }
+
+  return last;
+}
+
 void swap(int *p, int *q) {
   int tmp = *p;
   *p = *q;
@@ -49,14 +66,19 @@ void nextPermutation(int *nums, int numsSize) {
   }
 
   // 1.2 find first greater pattern
-  int *q;
-  for (q = nums + numsSize - 1; q > p; --q) {
-    if (*q > *(p - 1)) {
-      break;
-    }
-  }
-  assert(p <= q && q < nums + numsSize && *(p - 1) < *p && *(p - 1) < *q &&
-         *p >= *q);
+  // sequential search
+  // int *q;
+  // for (q = nums + numsSize - 1; q > p; --q) {
+  //   if (*q > *(p - 1)) {
+  //     break;
+  //   }
+  // }
+
+  // binary search
+  int *q = upper_bound(p - 1, nums + numsSize - 1, *(p - 1));
+
+ // assert(p <= q && q < nums + numsSize && *(p - 1) < *p && *(p - 1) < *q &&
+//         *p >= *q);
 
   // 1.3 swap to set highest position
   swap(p - 1, q);
@@ -66,7 +88,7 @@ void nextPermutation(int *nums, int numsSize) {
 }
 
 int main() {
-  int arr[] = {3, 2};
+  int arr[] = {-6, -3, 1, 2};
   const int size = sizeof arr / sizeof *arr;
   for (int i = 0; i < 8; ++i) {
     for (int j = 0; j < size; ++j) {
