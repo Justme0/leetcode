@@ -20,7 +20,7 @@ Another example is ")()())", where the longest valid parentheses substring is
 class Solution {
 public:
   int longestValidParentheses(std::string s) {
-    std::stack<std::string::iterator> stk;
+    std::stack<std::string::iterator> stk; // only store the index of '('
     std::string::iterator start = s.begin();
     int ret = 0;
 
@@ -54,6 +54,7 @@ void test(int expected, const char *str) {
 }
 
 int main() {
+  test(2, "(()");
   test(2, "()(()");
   test(4, "(())(()");
   test(4, "(())");
