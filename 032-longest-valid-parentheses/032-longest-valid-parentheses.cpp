@@ -21,25 +21,25 @@ class Solution {
 public:
   int longestValidParentheses(std::string s) {
     std::stack<std::string::iterator> stk; // only store the index of '('
-    std::string::iterator start = s.begin();
-    int ret = 0;
+    std::string::iterator before_first = s.begin() - 1;
+    int len = 0;
 
     for (auto i = s.begin(); i != s.end(); ++i) {
       if (*i == '(') {
         stk.push(i);
       } else {
         if (stk.empty()) {
-          start = i + 1;
+          before_first = i;
         } else {
-          // match successfully
+          // matched
           stk.pop();
-          int tmp_ret = stk.empty() ? i - start + 1 : i - stk.top();
-          ret = std::max(ret, tmp_ret);
+          int new_len = i - (stk.empty() ? before_first : stk.top());
+          len = std::max(len, new_len);
         }
       }
     }
 
-    return ret;
+    return len;
   }
 };
 
