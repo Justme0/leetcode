@@ -1,3 +1,13 @@
+/*
+TODO: review other algorithms
+
+DP
+http://bangbingsyb.blogspot.jp/2014/11/leetcode-longest-valid-parentheses.html
+
+space O(1)
+http://www.zrzahid.com/longest-valid-parenthesis/
+*/
+
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
