@@ -9,6 +9,8 @@ Note:
 A valid Sudoku board (partially filled) is not necessarily solvable. Only the filled cells need to be validated.
 =end
 
+# NOTE: the returned value type of Math.sqrt is Fixnum
+
 # sudo gem install test-unit
 require "test/unit"
 require "awesome_print"
@@ -22,7 +24,6 @@ class Iter
     @matrix = matrix
     @row = row
     @col = col
-    puts "row is #{row}, col is #{col}"
   end
 
   def item
@@ -31,7 +32,7 @@ class Iter
 
   def !=(other)
     # OPTIMIZE
-    not (@matrix == other.matrix and @row == other.row and @col == other.col)
+    not (@matrix.equal?(other.matrix) and @row == other.row and @col == other.col)
   end
 end
 
@@ -49,7 +50,7 @@ end
 
 class GridIter < Iter
   def go_next
-    len = Math.sqrt @matrix.size
+    len = (Math.sqrt @matrix.size).to_i
     first = @col / len * len
     last = first + len
     if @col == last - 1
@@ -86,15 +87,13 @@ def is_valid_sudoku(board)
     return false unless is_valid(HorizontalIter.new(board, row, 0),
                                  HorizontalIter.new(board, row, board.size))
   end
-  puts "horizon ok"
 
   board.size.times do |col|
     return false unless is_valid(VerticalIter.new(board, 0, col),
                                  VerticalIter.new(board, board.size, col))
   end
-  puts "vertical ok"
 
-  len = Math.sqrt board.size
+  len = (Math.sqrt board.size).to_i
   (0...len).each do |i|
     row = i * len
     (0...len).each do |j|
@@ -103,6 +102,7 @@ def is_valid_sudoku(board)
                                    GridIter.new(board, row + len, col))
     end
   end
+
   true
 end
 
