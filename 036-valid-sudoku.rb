@@ -73,7 +73,7 @@ def is_valid(b, e)
       next
     end
 
-    return false if arr[i.item.to_i] # Check if there are repeat elements.
+    return false if arr[i.item.to_i] # Check if there is duplicate element.
     arr[i.item.to_i] = true
     i.go_next
   end
