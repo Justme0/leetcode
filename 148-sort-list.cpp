@@ -8,6 +8,7 @@ struct ListNode {
   ListNode(int x) : val(x), next(NULL) {}
 };
 
+// divide and conquer
 class Solution {
 public:
   ListNode* sortList(ListNode* head) {
@@ -29,13 +30,15 @@ public:
       return head;
     }
 
-    int leftLen = len / 2;
+    int leftLen = len / 2; // len>=2, leftLen>=1
     int rightLen = len - leftLen;
-    ListNode* middle = advance(head, leftLen); // [head, middle) & [middle, tail)
+    ListNode* preMiddle = advance(head, leftLen - 1);
+    ListNode* middle = preMiddle->next; // [head, middle) & [middle, tail)
+    preMiddle->next = nullptr; // key: divide to two separated lists
     head = sortListHelper(head, leftLen);
     middle = sortListHelper(middle, rightLen);
 
-    return merge(head, leftLen, middle, rightLen);
+    return merge(head, middle);
   }
 
   ListNode* advance(ListNode* head, int len) {
@@ -46,40 +49,117 @@ public:
     return head;
   }
 
-  ListNode* merge(ListNode* first, int firstLen, ListNode* second, int secondLen)
+  ListNode* merge(ListNode* first, ListNode* second)
   {
     ListNode dummy(0);
     ListNode *tail = &dummy;
 
-    int lenA = 0;
-    int lenB = 0;
-
-    while (lenA < firstLen && lenB < secondLen) {
+    while (first != nullptr && second != nullptr) {
       if (first->val <= second->val) {
         tail->next = first;
-
         first = first->next;
-        ++lenA;
       } else {
         tail->next = second;
-
         second = second->next;
-        ++lenB;
       }
       tail = tail->next;
     }
 
-    if (lenA == firstLen) {
+    if (first == nullptr) {
       tail->next = second;
     } else {
-      ListNode* backA = advance(first, firstLen - lenA - 1);
-      backA->next = tail->next;
       tail->next = first;
     }
 
     return dummy.next;
   }
 };
+
+#ifdef sgi_stl_algo
+class Solution {
+public:
+    ListNode* sortList(ListNode* head) {
+      // Do nothing if the list has length 0 or 1.
+      if (head == nullptr || head->next == nullptr) {
+        return head;
+      }
+
+      ListNode* carry = nullptr;
+      ListNode* tmp[64]{};
+      ListNode** fill = tmp;
+      ListNode** counter = nullptr;
+      do
+      {
+        carry = head;
+        head = head->next;
+        carry->next = nullptr;
+        //carry.splice(carry.begin(), *this, begin());
+        // carry.size==1
+
+        for(counter = tmp; counter != fill && nullptr != *counter; ++counter)
+        {
+          // This operation is stable: for equivalent elements in the two lists, the elements from *this shall always precede the elements from other
+          // https://en.cppreference.com/w/cpp/container/list/merge
+          // so not equal to carry.merge(*count)
+          //carry = merge(carry, counter);
+
+          // count.size>=1, carry.size>=1
+          *counter = merge(*counter, carry);
+
+          // count.size>=2, carry.size=0
+          std::swap(carry, *counter);
+          // count.size=0, carry.size>=2
+        }
+
+        // count.size=0, carry.size>=1
+        std::swap(carry, *counter);
+        // count.size>=1, carry.size=0
+        if (counter == fill)
+          ++fill;
+      }
+      while ( head != nullptr );
+
+      for (counter = tmp + 1; counter != fill; ++counter)
+        *counter = merge(*counter, *(counter - 1));
+      return *(fill - 1);
+    }
+
+    ListNode* merge(ListNode*& first, ListNode*& second)
+    {
+      ListNode dummy(0);
+      ListNode *tail = &dummy;
+
+      int lenA = 0;
+      int lenB = 0;
+
+      while (first != nullptr && second != nullptr) {
+        if (first->val <= second->val) {
+          tail->next = first;
+
+          first = first->next;
+          ++lenA;
+        } else {
+          tail->next = second;
+
+          second = second->next;
+          ++lenB;
+        }
+        tail = tail->next;
+      }
+
+      if (first == nullptr) {
+        tail->next = second;
+      } else {
+        tail->next = first;
+      }
+
+      first = nullptr;
+      second = nullptr;
+
+      return dummy.next;
+    }
+};
+#endif
 
 void trimLeftTrailingSpaces(string &input) {
   input.erase(input.begin(), find_if(input.begin(), input.end(), [](int ch) {
